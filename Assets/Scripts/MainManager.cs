@@ -12,7 +12,7 @@ public class MainManager : MonoBehaviour
 
     public Text ScoreText;
     public GameObject GameOverText;
-    
+    public Text BestText;
     private bool m_Started = false;
     private int m_Points;
     
@@ -24,7 +24,10 @@ public class MainManager : MonoBehaviour
     {
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
-        
+        if(GameManager.Instance.playerName!=null)
+            ScoreText.text = "Score : 0" + " Name: " + GameManager.Instance.playerName;
+
+
         int[] pointCountArray = new [] {1,1,2,2,5,5};
         for (int i = 0; i < LineCount; ++i)
         {
@@ -40,6 +43,10 @@ public class MainManager : MonoBehaviour
 
     private void Update()
     {
+        if(GameManager.Instance.bestScore!=0)
+        {
+            BestText.text = "Best Score :"+ GameManager.Instance.bestScore + " Name : " + GameManager.Instance.bestName;
+        }
         if (!m_Started)
         {
             if (Input.GetKeyDown(KeyCode.Space))
@@ -55,6 +62,11 @@ public class MainManager : MonoBehaviour
         }
         else if (m_GameOver)
         {
+            if(m_Points>GameManager.Instance.bestScore)
+            {
+                GameManager.Instance.bestScore = m_Points;
+                GameManager.Instance.bestName = GameManager.Instance.playerName;
+            }
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
@@ -65,7 +77,7 @@ public class MainManager : MonoBehaviour
     void AddPoint(int point)
     {
         m_Points += point;
-        ScoreText.text = $"Score : {m_Points}";
+        ScoreText.text = $"Score : {m_Points}" + " Name: "+GameManager.Instance.playerName;
     }
 
     public void GameOver()
